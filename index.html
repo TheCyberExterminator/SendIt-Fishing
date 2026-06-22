@@ -381,6 +381,7 @@ canvas{width:100%;display:block}
     <div>Should I send it today?</div>
     <div class="me">Made by Shadi Soltan</div>
     <div>Security Operations</div>
+    <div class="faint" style="margin-top:6px;font-size:10px">build 3.4</div>
     <div class="faint" style="margin-top:8px;font-size:11px">Tides are predictions — check the Bureau of Meteorology before any low-tide rock or breakwall session. Wear a PFD. Never turn your back on the sea.</div>
   </footer>
 </main>
@@ -425,7 +426,7 @@ const AppState = {
 
 /* ---------------- DebugService ---------------- */
 const DebugService = (() => {
-  const d = { swVersion: 'sendit-v3-3', attempts: {}, };
+  const d = { swVersion: 'sendit-v3-4', attempts: {}, };
   const log = (...a) => { if (AppState.debug) console.log('[SendIt]', ...a); };
   const group = (n) => { if (AppState.debug) console.group(n); };
   const end = () => { if (AppState.debug) console.groupEnd(); };
@@ -1449,7 +1450,7 @@ function openSettings() {
   const cseg = (v, l) => '<button data-calib="' + v + '" class="seg' + (cal === v ? ' on' : '') + '">' + l + '</button>';
   UIService.openSheet(
     '<h2 style="font-size:18px;margin-bottom:4px">Settings</h2>' +
-    '<label>Appearance</label><div class="segrow">' + seg('dark', '🌙 Dark') + seg('light', '☀️ Light') + seg('fun', '🎉 Fun') + '</div>' +
+    '<label>Appearance</label><div class="segrow">' + seg('light', '☀️ Light') + seg('dark', '🌙 Dark') + seg('fun', '🎉 Fun') + '</div>' +
     '<label>Wind units</label><div class="segrow">' + useg('kmh', 'km/h') + useg('kn', 'Knots') + '</div>' +
     '<label>Learn from my catches (beta)</label><div class="segrow">' + cseg(true, '🧠 On') + cseg(false, 'Off') + '</div>' +
     '<div class="muted" style="font-size:11px;margin-top:4px">Personal, on-device tuning of your SendIt Score from your catch log — bounded ±12 pts, needs 8+ catches with conditions (you have ' + CalibrationService.counts().n + '). Also log “no fish” sessions to teach it. Nothing leaves your device.</div>' +
@@ -1497,7 +1498,7 @@ function bindSearch() {
 function renderThemeSwitch() {
   const el = $('#themeQuick'); if (!el) return; const t = ThemeService.get();
   const seg = (v, l) => '<button data-tq="' + v + '" class="seg' + (t === v ? ' on' : '') + '">' + l + '</button>';
-  el.innerHTML = seg('dark', '🌙 Dark') + seg('light', '☀️ Light') + seg('fun', '🎉 Fun');
+  el.innerHTML = seg('light', '☀️ Light') + seg('dark', '🌙 Dark') + seg('fun', '🎉 Fun');
   $$('#themeQuick [data-tq]').forEach(b => b.addEventListener('click', () => { ThemeService.set(b.dataset.tq); renderThemeSwitch(); }));
 }
 
