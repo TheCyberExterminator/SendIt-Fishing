@@ -1,0 +1,74 @@
+# SendIt Tide Engine v3 — Deep Dive
+
+How SendIt predicts tides for free, honestly, and accurately across all of Australia — and why this is better than the old single "NSW-tuned" model.
+
+---
+
+## The problem with v2
+
+v2's offline tide was **one equilibrium model with fixed Fort-Denison amplitudes** (M2 .50, S2 .13, K1 .14, O1 .10) applied everywhere. That's fine for NSW but **wrong elsewhere**: Fremantle/Perth is **diurnal and micro-tidal** (~0.6 m), Broome is **macro-tidal** (~8–10 m). A fixed NSW model shows the wrong range *and the wrong regime* (semidiurnal vs diurnal) outside the east coast.
+
+## What free, legal options actually exist (researched)
+
+| Source | Free? | Key? | CORS | AU coverage | Verdict |
+|---|---|---|---|---|---|
+| **Open-Meteo Marine** (`sea_level_height_msl`) | ✅ | no | ✅ | global model, **coarse inshore (8 km, ocean-only)** | **primary** |
+| **BoM / AHO official constituents** | ❌ | "available **on request through our licensing process**" (AHO) | — | best AU | **licensing dead-end** — cannot redistribute |
+| **WorldTides** | credits | ✅ key | ✅ | global | fails "no key / no tiny limits" |
+| **StormGlass** | tiny free tier | ✅ key (~10/day) | ✅ | global | fails "no key / no tiny limits" |
+| **NOAA CO-OPS** (Tides & Currents API) | ✅ | no | ✅ | **US only** | great but **not AU** → documented, not wired |
+| **austides** (community BoM proxy) | ✅ | no | ✅ | AU standard ports | **best-effort backup** (unofficial, SPOF) |
+| **TICON-4 harmonics** (openwatersio/Neaps DB) | ✅ | n/a (bundled) | n/a | **~4,200 global stations** | **CC BY 4.0** → the legal path to bundle exact constants (future) |
+
+**Key legal finding:** official AU constituents are licence-gated, **but** the **TICON-4** dataset (CC BY 4.0, derived from GESLA-4) is a *free, attributable* global source of real harmonic constants — the legitimate way to bundle exact per-port data later, avoiding the AHO licence entirely.
+
+## The v3 engine — three real improvements
+
+### 1. Data-driven harmonic fit (the headline) — copyright-free, per-port, offline
+When the live sea-level series arrives (Open-Meteo Marine, now a **~7-day hourly window**: `past_days=2&forecast_days=5`), SendIt runs a **least-squares harmonic analysis** to recover the local constituents:
+
+```
+η(t) = Z0 + Σ_k [ a_k·cos(ω_k·τ) + b_k·sin(ω_k·τ) ]      (linear in Z0, a_k, b_k)
+```
+
+- Constituents fitted: **M2, S2, N2, K1, O1** (speeds from NOAA/IHO: M2 28.9841°/h, S2 30.0000, N2 28.4397, K1 15.0411, O1 13.9430).
+- Solved via **normal equations + Gauss–Jordan** (11 unknowns, ~168 samples → well over-determined).
+- The fitted constituents are **cached per location** (`sendit_harm_<lat2>_<lon2>`, 45-day TTL) and used to **predict offline** for that exact spot — derived from real data, no copyright, durable for weeks. Re-fit whenever live data is seen again.
+- Reported as **"Fitted"** with `confidence: Good`, Courtier **form factor F = (K1+O1)/(M2+S2)** computed for regime awareness.
+
+**Verified:** on a synthetic tide (known Z0/M2/S2/N2/K1/O1) the fit recovers Z0 and amplitudes to **±2–4 cm**, RMS < 0.02 m, and **predicts 2 days ahead to < 5 cm**. (See `TEST-RESULTS.md` — 15/15.)
+
+### 2. Form-factor regional cold-start — regime-aware first guess
+When there's **no live data and no cached fit** (first visit, fully offline), instead of the one NSW model SendIt picks a **regional calibration** by location:
+
+- M2, S2 derived from the region's **mean spring/neap range**: `M2=(spring+neap)/4`, `S2=(spring−neap)/4`.
+- K1, O1 from the region's **form factor F**: `K1+O1 = F·(M2+S2)`, split ~58/42.
+- Regions (grounded regime facts — Pugh & Woodworth 2014; AHO ANTT; well-known port characteristics): NSW/SE (semidiurnal, F≈0.18), SE-QLD, Tropical-QLD, **Gulf of Carpentaria (diurnal, F≈2.2)**, NT Top End, **Kimberley/NW (macro-tidal ~8 m)**, Pilbara, **SW-WA (diurnal, micro-tidal ~0.7 m)**, SA/Vic/Tas.
+- **Amplitudes are labelled "regional estimate"** — never presented as official. Exact constants are the TICON-4 (CC-BY) upgrade path.
+
+**Verified:** Sydney → semidiurnal M2-dominant; Perth → diurnal, K1 > M2, micro-tidal; Broome → macro-tidal. (Tests confirm regimes differ correctly.)
+
+### 3. Re-added BoM proxy as a backup *before* the engine
+Per your ask for more reliable AU sources before the offline engine, the **austides** community proxy (real BoM High/Low for AU standard ports, free/no-key) is now a labelled best-effort backup. **Honest caveat:** it's an *unofficial third-party proxy* (single point of failure; could change/disappear) — so it sits after Open-Meteo and is clearly tagged `(unofficial proxy)`.
+
+## The new fallback chain (tides)
+
+```
+1. Open-Meteo Marine sea-level         → live  + fit & cache constituents
+2. BoM via austides proxy (AU ports)   → live  (unofficial, best-effort)        ← NEW backup
+3. Cached live extrema (same location) → cached
+4. Cached fitted constituents          → "Fitted" (data-driven, offline)        ← NEW
+5. Regional form-factor engine         → "Engine · <region>"                    ← NEW (regime-aware)
+6. Generic equilibrium engine          → "Engine (generic)" (floor)
+7. neutral
+```
+Labels in the UI: **Live · Cached · Fitted · Engine** + a one-line source note. Confidence: live → High, fitted → Good, regional/generic → Modelled.
+
+## Honest limitations (unchanged rule: don't fake, don't hide)
+- The fit is only as good as the **input series** — Open-Meteo Marine is coarse inshore, so harbour fits inherit that; still better than a fixed model, and labelled.
+- **3 constituents share frequencies** that need >14 days to fully separate (S2/K2, M2/N2); a 7-day fit resolves the **dominant** M2/S2/K1/O1 well for near-term prediction, not a full 37-constituent analysis. No nodal (18.6-yr) correction → re-fit keeps it current.
+- Regional amplitudes are **estimates**; exact per-port accuracy needs the **TICON-4 (CC BY 4.0)** bundle — the documented next step.
+- **Still not official** — always check the Bureau of Meteorology before a low-tide rock/breakwall session.
+
+## Future upgrade (documented, legal)
+Bundle a subset of **TICON-4** (CC BY 4.0, with attribution) harmonic constants for AU ports → exact amplitudes/phases offline at first visit, no licence issue, no network. The engine already consumes a `{name, speed, a, b}` constituent shape, so wiring a bundled table is a drop-in.
