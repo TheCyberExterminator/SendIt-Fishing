@@ -379,9 +379,7 @@ canvas{width:100%;display:block}
   <footer>
     <div class="bn">SendIt Fishing 🎣</div>
     <div>Should I send it today?</div>
-    <div class="me">Made by Shadi Soltan</div>
-    <div>Security Operations</div>
-    <div class="faint" style="margin-top:6px;font-size:10px">build 3.5</div>
+    <div class="faint" style="margin-top:6px;font-size:10px">build 3.6</div>
     <div class="faint" style="margin-top:8px;font-size:11px">Tides are predictions — check the Bureau of Meteorology before any low-tide rock or breakwall session. Wear a PFD. Never turn your back on the sea.</div>
   </footer>
 </main>
@@ -426,7 +424,7 @@ const AppState = {
 
 /* ---------------- DebugService ---------------- */
 const DebugService = (() => {
-  const d = { swVersion: 'sendit-v3-5', attempts: {}, };
+  const d = { swVersion: 'sendit-v3-6', attempts: {}, };
   const log = (...a) => { if (AppState.debug) console.log('[SendIt]', ...a); };
   const group = (n) => { if (AppState.debug) console.group(n); };
   const end = () => { if (AppState.debug) console.groupEnd(); };
