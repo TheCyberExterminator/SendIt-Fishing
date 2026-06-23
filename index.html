@@ -381,7 +381,7 @@ canvas{width:100%;display:block}
     <div>Should I send it today?</div>
     <div class="me">Made by Shadi Soltan</div>
     <div>Security Operations</div>
-    <div class="faint" style="margin-top:6px;font-size:10px">build 3.4</div>
+    <div class="faint" style="margin-top:6px;font-size:10px">build 3.5</div>
     <div class="faint" style="margin-top:8px;font-size:11px">Tides are predictions — check the Bureau of Meteorology before any low-tide rock or breakwall session. Wear a PFD. Never turn your back on the sea.</div>
   </footer>
 </main>
@@ -426,7 +426,7 @@ const AppState = {
 
 /* ---------------- DebugService ---------------- */
 const DebugService = (() => {
-  const d = { swVersion: 'sendit-v3-4', attempts: {}, };
+  const d = { swVersion: 'sendit-v3-5', attempts: {}, };
   const log = (...a) => { if (AppState.debug) console.log('[SendIt]', ...a); };
   const group = (n) => { if (AppState.debug) console.group(n); };
   const end = () => { if (AppState.debug) console.groupEnd(); };
@@ -1165,15 +1165,9 @@ const UIService = (() => {
       srcBadge(d.tide.real ? 'live' : 'engine', 'Tide: ' + (d.tide.real ? d.tide.source.replace(' (cached)', '') : 'on-device engine')) +
       srcBadge(d.swell ? 'live' : 'off', 'Swell: ' + (d.swell ? 'live' : 'n/a'));
 
-    renderBestWindow(d);
-    renderBite(d);
-    renderWhy(d);
-    renderTide(d);
-    renderWeather(d);
-    renderForecast(d);
-    renderSpecies(d);
-    renderPlanner(d);
-    renderSafety(d);
+    // Resilient: a failure in one section never blanks the others.
+    [renderBestWindow, renderBite, renderWhy, renderTide, renderWeather, renderForecast, renderSpecies, renderPlanner, renderSafety]
+      .forEach(fn => { try { fn(d); } catch (e) { DebugService.log('render error in ' + (fn.name || '?'), e); } });
   }
 
   function allWindows(d) {
@@ -1304,8 +1298,9 @@ const UIService = (() => {
     const days = (d.daily || []).slice(0, n);
     const todayKey = new Date(d.now).toDateString(), tomKey = new Date(d.now + 86400000).toDateString();
     host.innerHTML = days.map(x => {
-      const lbl = x.date.toDateString() === todayKey ? 'Today' : x.date.toDateString() === tomKey ? 'Tomorrow' : x.date.toLocaleDateString('en-AU', { weekday: 'long' });
-      const dstr = x.date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+      const dt = new Date(x.date);                                  // cached dates are strings → coerce
+      const lbl = dt.toDateString() === todayKey ? 'Today' : dt.toDateString() === tomKey ? 'Tomorrow' : dt.toLocaleDateString('en-AU', { weekday: 'long' });
+      const dstr = dt.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
       const wx = wmo(x.code), desc = wx[0], em = wx[1];
       return '<div class="fcRow"><div class="fcDay"><b>' + lbl + '</b><span>' + dstr + '</span></div>' +
         '<div class="fcEm" title="' + Util.esc(desc) + '">' + em + '</div>' +
@@ -1346,11 +1341,12 @@ const UIService = (() => {
   function renderPlanner(d) {
     const days = d.daily.slice(0, 7);
     const best = days.reduce((a, b) => b.ds > a.ds ? b : a, days[0]), bi = days.indexOf(best);
-    const lbl = bi === 0 ? 'today' : bi === 1 ? 'tomorrow' : best.date.toLocaleDateString('en-AU', { weekday: 'long' });
+    const lbl = bi === 0 ? 'today' : bi === 1 ? 'tomorrow' : new Date(best.date).toLocaleDateString('en-AU', { weekday: 'long' });
     $('#bestSession').innerHTML = '🎯 Best session: <span style="color:var(--text);font-weight:700;text-transform:capitalize">' + lbl + '</span> · score <span style="color:' + ScoreEngine.color(best.ds) + ';font-weight:800">' + best.ds + '</span> · ' + wmo(best.code)[0] + ' · wind ' + windDisp(best.wind) + ' ' + windUnit();
     $('#planRow').innerHTML = days.map((x, i) => {
-      const dl = i === 0 ? 'Today' : i === 1 ? 'Tmrw' : x.date.toLocaleDateString('en-AU', { weekday: 'short' });
-      const wknd = [0, 6].includes(x.date.getDay());
+      const dt = new Date(x.date);
+      const dl = i === 0 ? 'Today' : i === 1 ? 'Tmrw' : dt.toLocaleDateString('en-AU', { weekday: 'short' });
+      const wknd = [0, 6].includes(dt.getDay());
       return '<div class="planday' + (i === bi ? ' best' : '') + '"><div class="d"' + (wknd ? ' style="color:var(--sand)"' : '') + '>' + dl + (i === bi ? ' 🎯' : '') + '</div><div class="em">' + wmo(x.code)[1] + '</div><div class="s" style="color:' + ScoreEngine.color(x.ds) + '">' + x.ds + '</div><div class="d">' + windDisp(x.wind) + (AppState.units === 'kn' ? 'kn' : '') + '</div></div>';
     }).join('');
   }

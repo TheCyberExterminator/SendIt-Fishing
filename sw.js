@@ -4,7 +4,7 @@
    - Live API data (Open-Meteo / MET Norway / Nominatim) is NEVER cached on purpose;
      the app does its own per-location localStorage caching and labels it honestly.
    Bump CACHE on every release; activate purges all older caches. */
-const CACHE = 'sendit-v3-4';
+const CACHE = 'sendit-v3-5';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('message', e => { if (e.data === 'skipWaiting') self.skipWaiting(); });
