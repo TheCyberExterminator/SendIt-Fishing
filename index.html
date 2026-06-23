@@ -18,7 +18,7 @@
   --bg:#06141f; --bg2:#0a1c2b; --panel:#0e2435; --panel2:#123048; --line:#1c3a52;
   --text:#e8f1f7; --muted:#8aa4b8; --faint:#5d788f;
   --aqua:#33e1c0; --aqua2:#2bd4d4; --blue:#4aa8ff; --sand:#f4c66a;
-  --good:#33e1c0; --warn:#f4b740; --bad:#ff6b6b; --shadow:rgba(0,0,0,.45);
+  --good:#33e1c0; --warn:#f4b740; --bad:#ff6b6b; --shadow:rgba(0,0,0,.45); --headerbg:rgba(6,20,31,.82);
   --grad:radial-gradient(1200px 600px at 50% -10%, #0c2334 0%, var(--bg) 60%);
   --r:18px; --r2:14px;
 }
@@ -27,7 +27,7 @@ html.light{
   --bg:#eef4f8; --bg2:#ffffff; --panel:#ffffff; --panel2:#f1f6fa; --line:#d8e3ec;
   --text:#0e2233; --muted:#5a7488; --faint:#90a6b6;
   --aqua:#0bb39a; --aqua2:#0a93b8; --blue:#2f7fd6; --sand:#cf8a1f;
-  --good:#0bb39a; --warn:#c98a0c; --bad:#e0453f; --shadow:rgba(15,40,60,.12);
+  --good:#0bb39a; --warn:#c98a0c; --bad:#e0453f; --shadow:rgba(15,40,60,.12); --headerbg:rgba(241,246,250,.88);
   --grad:radial-gradient(1200px 600px at 50% -10%, #dbe9f2 0%, var(--bg) 60%);
 }
 /* ---- FUN (playful tropical/sunset) ---- */
@@ -35,7 +35,7 @@ html.fun{
   --bg:#23104a; --bg2:#2e1560; --panel:#371a72; --panel2:#46228a; --line:#6a3bb0;
   --text:#fff0fb; --muted:#d7b8f5; --faint:#a98fd6;
   --aqua:#2bf0c4; --aqua2:#36e0ff; --blue:#9b7bff; --sand:#ffd23f;
-  --good:#3ef0a0; --warn:#ffb13f; --bad:#ff5d8f; --shadow:rgba(60,0,90,.55);
+  --good:#3ef0a0; --warn:#ffb13f; --bad:#ff5d8f; --shadow:rgba(60,0,90,.55); --headerbg:rgba(35,16,74,.85);
   --grad:radial-gradient(760px 520px at 88% -6%, rgba(255,93,143,.55) 0%, transparent 58%),
          radial-gradient(800px 560px at 6% 6%, rgba(54,224,255,.42) 0%, transparent 56%),
          radial-gradient(900px 700px at 50% 120%, rgba(123,107,255,.40) 0%, transparent 60%),
@@ -74,7 +74,7 @@ a{color:var(--aqua2)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 svg.ic{width:18px;height:18px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* header */
-header{position:sticky;top:0;z-index:50;background:rgba(6,20,31,.82);backdrop-filter:blur(12px);
+header{position:sticky;top:0;z-index:50;background:var(--headerbg);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line)}
 .brand{font-size:16px;font-weight:800;letter-spacing:-.02em}
 .brand b{color:var(--aqua)}
@@ -168,6 +168,9 @@ header{position:sticky;top:0;z-index:50;background:rgba(6,20,31,.82);backdrop-fi
 .fcT{font-size:15px;font-weight:700}
 .fcT span{color:var(--muted);font-weight:500;font-size:13px}
 .fcM{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r2);padding:11px;margin-bottom:8px}
+.spot:active{transform:scale(.99)}
+.spotseg{display:flex;gap:6px;margin-top:8px}
 /* segmented controls (settings) */
 .segrow{display:flex;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:4px}
 .seg{flex:1;text-align:center;padding:9px 6px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted)}
@@ -367,6 +370,24 @@ canvas{width:100%;display:block}
     <div id="recentBox" class="scroller" style="gap:6px;flex-wrap:wrap"></div>
   </section>
 
+    <!-- 9b. FISHING SPOTS -->
+  <section class="card">
+    <div class="between"><h2><svg class="ic" style="color:var(--thermal,var(--sand))" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 0114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Fishing Spots</h2><span id="spotCount" class="muted" style="font-size:12px"></span></div>
+    <div class="spotseg"><button id="spotNearBtn" class="seg">Near me</button><button id="spotAllBtn" class="seg">All spots</button></div>
+    <div class="searchbar" id="spotSearchWrap" style="margin-top:8px"><svg class="ic muted" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="spotSearch" type="text" inputmode="search" autocomplete="off" placeholder="Search spot or species…" /></div>
+    <div id="spotCats" class="scroller" style="gap:6px;margin-top:8px;display:none"></div>
+    <div id="spotRegions" class="scroller" style="gap:6px;margin-top:8px;display:none"></div>
+    <div id="spotList" style="margin-top:10px"></div>
+  </section>
+
+  <!-- 9c. MAP -->
+  <section class="card">
+    <div class="between"><h2><svg class="ic" style="color:var(--blue)" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Map</h2><span id="mapNote" class="muted" style="font-size:12px"></span></div>
+    <div id="mapLegend" class="scroller" style="gap:8px;font-size:11px;margin-bottom:8px;display:none"><span>🟢 spot</span><span style="color:var(--warn)">🟠 hot water</span><span style="color:var(--aqua2)">🔵 pressure</span><span>📍 you</span></div>
+    <div id="map" style="height:320px;border-radius:12px;overflow:hidden;display:none"></div>
+    <button id="mapBtn" class="btn full tap" style="margin-top:4px">🗺️ Show map of spots</button>
+  </section>
+
   <!-- 10. CATCH LOG -->
   <section class="card">
     <div class="between"><h2><svg class="ic" style="color:var(--aqua)" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h6"/></svg>Catch Log</h2>
@@ -379,7 +400,7 @@ canvas{width:100%;display:block}
   <footer>
     <div class="bn">SendIt Fishing 🎣</div>
     <div>Should I send it today?</div>
-    <div class="faint" style="margin-top:6px;font-size:10px">build 3.6</div>
+    <div class="faint" style="margin-top:6px;font-size:10px">build 3.8</div>
     <div class="faint" style="margin-top:8px;font-size:11px">Tides are predictions — check the Bureau of Meteorology before any low-tide rock or breakwall session. Wear a PFD. Never turn your back on the sea.</div>
   </footer>
 </main>
@@ -418,13 +439,13 @@ const { $, $$ } = Util;
 /* ---------------- AppState ---------------- */
 const AppState = {
   loc: null, data: null, loadSeq: 0, species: 'auto', biteTab: 0,
-  units: 'kmh', debug: /[?&]debug=true/.test(location.search),
+  units: 'kmh', spotsAll: false, spotRegion: 'All', spotQuery: '', spotCat: '', debug: /[?&]debug=true/.test(location.search),
   online: navigator.onLine,
 };
 
 /* ---------------- DebugService ---------------- */
 const DebugService = (() => {
-  const d = { swVersion: 'sendit-v3-6', attempts: {}, };
+  const d = { swVersion: 'sendit-v3-8', attempts: {}, };
   const log = (...a) => { if (AppState.debug) console.log('[SendIt]', ...a); };
   const group = (n) => { if (AppState.debug) console.group(n); };
   const end = () => { if (AppState.debug) console.groupEnd(); };
@@ -924,6 +945,186 @@ const CalibrationService = (() => {
   return { on, setOn, vectorFrom, adjust, counts, DIMS, BUCKETS };
 })();
 
+/* ---------------- SpotsService (curated 113 NSW fishing spots) ---------------- */
+const SpotsService = (() => {
+  const SPOTS = [
+  {n:'The Spit Bridge (Middle Harbour)',r:'Sydney Harbour',lat:-33.8040,lon:151.2470,t:'deep',sp:['Bream','Flathead','Jewfish','Trevally'],why:'Middle Harbour bridge with strong tidal flow — bream, flathead & jew on the pylons; fish the tide change.',feat:'current',water:'salt'},
+  {n:'Roseville Bridge (Middle Harbour)',r:'Sydney Harbour',lat:-33.7660,lon:151.2050,t:'deep',sp:['Jewfish','Bream','Flathead'],why:'Deep water under the bridge — school jew at night, bream & flathead on the run-out. Current funnels bait.',feat:'current',water:'brackish'},
+  {n:'Davidson Park (Middle Harbour)',r:'Sydney Harbour',lat:-33.7670,lon:151.2130,t:'estuary',sp:['Bream','Flathead','Jewfish'],why:'Family-friendly Garigal NP foreshore & ramp — bream & flathead close in, jew in the deeper channel.',feat:null,water:'brackish'},
+  {n:'Tunks Park (Cammeray)',r:'Sydney Harbour',lat:-33.8160,lon:151.2135,t:'estuary',sp:['Bream','Flathead','Luderick'],why:'Snaggy Middle Harbour creek — best at high tide with light soft plastics for bream & flathead.',feat:null,water:'brackish'},
+  {n:'Cremorne Point',r:'Sydney Harbour',lat:-33.8470,lon:151.2280,t:'rock',sp:['Kingfish','Bream','Squid','Trevally'],why:'Deep-water harbour point with a sea wall — squid for bait, kings on the bait runs, bream off the wall.',feat:'current',water:'salt'},
+  {n:'Greenwich Baths (Lane Cove R)',r:'Parramatta River',lat:-33.8400,lon:151.1830,t:'jetty',sp:['Bream','Flathead','Whiting'],why:'Lane Cove River baths & wharf — easy bream, flathead & whiting. Release only (dioxin advisory).',feat:null,water:'brackish'},
+  {n:'Lane Cove Weir (Bass)',r:'Freshwater & Bass',lat:-33.8130,lon:151.1580,t:'estuary',sp:['Bass','Bream'],why:'Above the weir is fresh — Australian bass on surface lures at dusk. Catch & release.',feat:null,water:'fresh'},
+  {n:'Nepean River (Penrith)',r:'Freshwater & Bass',lat:-33.7510,lon:150.6890,t:'estuary',sp:['Bass'],why:'Classic western-Sydney freshwater bass river — surface lures & spinnerbaits at dawn/dusk in the warmer months.',feat:null,water:'fresh'},
+  /* ===== ILLAWARRA & SOUTH COAST ===== */
+  {n:'Lake Illawarra (Warilla)',r:'Illawarra & South Coast',lat:-34.5226,lon:150.8406,t:'estuary',sp:['Bream','Whiting','Flathead','Luderick'],why:'Big shallow lake (33km²) — whiting & bream in summer, luderick in winter. Fish the snags.',feat:null},
+  {n:'Windang Bridge & Channel',r:'Illawarra & South Coast',lat:-34.5340,lon:150.8660,t:'deep',sp:['Bream','Whiting','Luderick','Flathead'],why:'The lake entrance — quick tides funnel fish; best 30 min either side of the change.',feat:'current'},
+  {n:'Windang Beach',r:'Illawarra & South Coast',lat:-34.5345,lon:150.8720,t:'beach',sp:['Tailor','Salmon','Jewfish','Whiting'],why:'Surf beach at the lake mouth — sand, surf & salmon; good jew at night on pilchard.',feat:null},
+  {n:'Bellambi Point',r:'Illawarra & South Coast',lat:-34.3670,lon:150.9230,t:'rock',sp:['Bream','Tailor','Trevally','Salmon','Drummer','Kingfish'],why:'Rocks on the south end for bream/tailor/trevally; salmon, drummer & kings off the point.',feat:'current'},
+  {n:'Towradgi Beach',r:'Illawarra & South Coast',lat:-34.3980,lon:150.9110,t:'beach',sp:['Bream','Whiting','Tailor'],why:'Locals’ favourite surf beach — bream, whiting & tailor; quieter at dawn.',feat:null},
+  {n:'Perkins Beach (Towradgi)',r:'Illawarra & South Coast',lat:-34.4080,lon:150.9050,t:'beach',sp:['Bream','Salmon','Flathead','Tailor','Jewfish'],why:'Artificial reef (2019) makes it an abundant hotspot — bream, salmon, flathead, jew.',feat:null},
+  {n:'Wollongong Harbour (Belmore Basin)',r:'Illawarra & South Coast',lat:-34.4210,lon:150.9030,t:'jetty',sp:['Bream','Trevally','Squid','Salmon'],why:'Sheltered harbour & breakwall — bream, trevally and squid around the basin.',feat:null},
+  {n:'Hill 60 / Port Kembla',r:'Illawarra & South Coast',lat:-34.4760,lon:150.9100,t:'rock',sp:['Salmon','Bonito','Drummer','Kingfish'],why:'Headland with deep water access — salmon, bonito & the odd king. Mind the swell.',feat:'current'},
+  {n:'Austinmer Beach',r:'Illawarra & South Coast',lat:-34.3050,lon:150.9280,t:'beach',sp:['Bream','Trevally','Luderick','Drummer','Salmon'],why:'Often overlooked — fish dawn/dusk for bream, trevally, drummer and salmon.',feat:null},
+  {n:'Bass Point (Shellharbour)',r:'Illawarra & South Coast',lat:-34.5910,lon:150.9010,t:'reef',sp:['Snapper','Kingfish','Salmon','Drummer'],why:'Renowned reef/headland — excellent snapper, kings & pelagics. Experienced rock anglers only.',feat:'current'},
+  {n:'Shellharbour',r:'Illawarra & South Coast',lat:-34.5810,lon:150.8710,t:'rock',sp:['Snapper','Drummer','Bream','Salmon'],why:'Rocky foreshore & reef — snapper and drummer off the ledges, bream in the bay.',feat:null},
+  {n:'Minnamurra River',r:'Illawarra & South Coast',lat:-34.6300,lon:150.8550,t:'estuary',sp:['Flathead','Trevally','Bream','Luderick'],why:'Pretty estuary — top species are dusky flathead, white trevally & bream.',feat:null},
+  {n:'Kiama Harbour / Blowhole Pt',r:'Illawarra & South Coast',lat:-34.6710,lon:150.8600,t:'rock',sp:['Salmon','Bonito','Kingfish','Snapper'],why:'Harbour & headland — salmon and bonito off the rocks, kings when bait is about.',feat:'current'},
+  {n:'Werri Beach (Gerringong)',r:'Illawarra & South Coast',lat:-34.7450,lon:150.8350,t:'beach',sp:['Salmon','Tailor','Whiting','Bream'],why:'Long clean surf beach — salmon and tailor in the gutters, whiting on the sand.',feat:null},
+  {n:'Seven Mile Beach (Gerroa)',r:'Illawarra & South Coast',lat:-34.7780,lon:150.7950,t:'beach',sp:['Salmon','Tailor','Jewfish','Whiting'],why:'Wild surf beach — salmon, tailor and big jew in the deeper gutters at night.',feat:null},
+
+  /* ===== ROYAL NP & PORT HACKING ===== */
+  {n:'Bundeena Bay',r:'Royal NP & Port Hacking',lat:-34.0820,lon:151.1510,t:'estuary',sp:['Flathead','Bream','Salmon','Whiting','Squid'],why:'Royal NP gateway — top species dusky flathead, bream & salmon; surf-cast off the bay.',feat:null},
+  {n:'Maianbar',r:'Royal NP & Port Hacking',lat:-34.0850,lon:151.1310,t:'sand',sp:['Flathead','Whiting','Bream'],why:'Quiet sand flats on Port Hacking — wade for flathead and whiting on the run-in.',feat:null},
+  {n:'Jibbon Beach',r:'Royal NP & Port Hacking',lat:-34.0800,lon:151.1630,t:'beach',sp:['Salmon','Whiting','Bream'],why:'Sheltered Royal NP beach — salmon in the wash, whiting and bream on the sand.',feat:null},
+  {n:'Wattamolla',r:'Royal NP & Port Hacking',lat:-34.1370,lon:151.1170,t:'rock',sp:['Salmon','Bream','Drummer'],why:'Scenic lagoon & rock platforms in the Royal NP — salmon, bream and drummer.',feat:null},
+  {n:'Garie Beach',r:'Royal NP & Port Hacking',lat:-34.1720,lon:151.0800,t:'beach',sp:['Salmon','Tailor','Whiting'],why:'Remote Royal NP surf beach — salmon and tailor in the gutters. Check swell/access.',feat:null},
+  {n:'Hacking River (Audley)',r:'Royal NP & Port Hacking',lat:-34.0730,lon:151.0580,t:'estuary',sp:['Bass','Bream','Flathead'],why:'Upper Hacking — Australian bass in the fresh, bream & flathead lower down. Soft plastics.',feat:null},
+  {n:'Swallow Rock Reserve (Grays Pt)',r:'Royal NP & Port Hacking',lat:-34.0580,lon:151.0730,t:'deep',sp:['Bream','Flathead'],why:'Hacking River edge — safe family fishing, plus a deep channel by the ramp for bream/flatty.',feat:'current'},
+  {n:'Gunnamatta Bay (Cronulla)',r:'Royal NP & Port Hacking',lat:-34.0580,lon:151.1500,t:'jetty',sp:['Tailor','Whiting','Flathead','Bream'],why:'Fish around the baths — moored boats & nets concentrate bait. Loads of tailor & whiting.',feat:null},
+  {n:'Darook Park (Cronulla)',r:'Royal NP & Port Hacking',lat:-34.0640,lon:151.1480,t:'sand',sp:['Whiting','Flathead','Bream'],why:'Calm Port Hacking foreshore — whiting, flathead & bream at most tides.',feat:null},
+  {n:'Cronulla Beach (Bate Bay)',r:'Royal NP & Port Hacking',lat:-34.0520,lon:151.1550,t:'beach',sp:['Salmon','Mulloway','Bream','Whiting'],why:'Long patrolled surf beach — salmon, mulloway & bream; fish the changing tide.',feat:null},
+  {n:'Port Hacking entrance (rocks)',r:'Royal NP & Port Hacking',lat:-34.0780,lon:151.1630,t:'rock',sp:['Kingfish','Salmon','Mulloway','Drummer'],why:'Deep water rock ledges — kings, salmon and mulloway in the wash zones. Experienced only.',feat:'current'},
+  {n:'Silver Beach (Kurnell)',r:'Botany Bay & Georges R',lat:-34.0120,lon:151.2140,t:'sand',sp:['Whiting','Flathead','Bream'],why:'Sheltered Botany Bay beach — whiting, flathead & bream on the flats.',feat:null},
+
+  /* ===== BOTANY BAY & GEORGES RIVER ===== */
+  {n:'La Perouse',r:'Botany Bay & Georges R',lat:-33.9850,lon:151.2330,t:'rock',sp:['Kingfish','Salmon','Bream','Drummer','Squid'],why:'Botany Bay north head — kings & salmon off the rocks, bream and squid in the bay.',feat:'current'},
+  {n:'Dolls Point / Lady Robinsons',r:'Botany Bay & Georges R',lat:-33.9910,lon:151.1510,t:'sand',sp:['Whiting','Flathead','Bream'],why:'Long Botany Bay sand beach — whiting & flathead on the flats, bream around structure.',feat:null},
+  {n:'Captain Cook Bridge',r:'Botany Bay & Georges R',lat:-33.9970,lon:151.1280,t:'deep',sp:['Bream','Flathead','Whiting','Luderick','Jewfish'],why:'Georges River mouth bridge — pylons & current hold bream, flathead, luderick and jew.',feat:'current'},
+  {n:'Tom Uglys Bridge',r:'Botany Bay & Georges R',lat:-33.9780,lon:151.1030,t:'deep',sp:['Bream','Flathead','Jewfish'],why:'Classic Georges River bridge — fish the pylons and shadow line on the tide for jew & bream.',feat:'current'},
+  {n:'Como Bridge & Pleasure Grds',r:'Botany Bay & Georges R',lat:-34.0000,lon:151.0630,t:'estuary',sp:['Bream','Flathead','Whiting','Luderick'],why:'Family-friendly Georges River reach — whiting, flathead & bream; luderick off the bridge.',feat:'current'},
+  {n:'Kogarah Bay',r:'Botany Bay & Georges R',lat:-33.9920,lon:151.1170,t:'estuary',sp:['Bream','Flathead','Luderick'],why:'Sheltered Georges River bay — consistent bream & flathead around the moorings.',feat:null},
+  {n:'Woronora River',r:'Botany Bay & Georges R',lat:-34.0220,lon:151.0480,t:'estuary',sp:['Bass','Bream','Flathead'],why:'Quiet Georges tributary — bass up top, bream & flathead in the lower reaches.',feat:null},
+  {n:'Sans Souci (Georges R)',r:'Botany Bay & Georges R',lat:-33.9950,lon:151.1330,t:'estuary',sp:['Bream','Flathead','Jewfish'],why:'Deep Georges River channel & rock walls — bream, flathead and school jew.',feat:'current'},
+
+  /* ===== PARRAMATTA RIVER (release only — dioxin advisory west of the Harbour Bridge) ===== */
+  {n:'Meadowbank / Kissing Point Wharf',r:'Parramatta River',lat:-33.8167,lon:151.0886,t:'jetty',sp:['Bream','Flathead','Whiting'],why:'Big bream, flathead & whiting off the wharf — best after dark. Closed to fishing 5–10am. Release only (dioxin advisory).',feat:null},
+  {n:'Huntleys Point Wharf (Gladesville)',r:'Parramatta River',lat:-33.8340,lon:151.1430,t:'jetty',sp:['Jewfish','Kingfish','Bream'],why:'Deep wharf — big jew, kingfish & bream after 8pm when ferries ease. Release only (dioxin advisory).',feat:'current'},
+  {n:'Iron Cove Bridge',r:'Parramatta River',lat:-33.8630,lon:151.1500,t:'deep',sp:['Bream','Whiting','Flathead'],why:'Family-friendly bridge with parking & toilets — bream, whiting & flathead on the pylons. Release only.',feat:'current'},
+  {n:'Clarkes Point Reserve (Woolwich)',r:'Parramatta River',lat:-33.8400,lon:151.1710,t:'deep',sp:['Luderick','Bream','Whiting','Mulloway','Kingfish','Snapper'],why:'Breakwall into deep water — luderick, bream, mulloway, even live-bait kings & snapper. East side run-out, south side run-in.',feat:'current'},
+  {n:'Rodd Point',r:'Parramatta River',lat:-33.8620,lon:151.1430,t:'estuary',sp:['Bream','Flathead'],why:'Easy land-based bay — bream & flathead on soft plastics close in. Release only (dioxin advisory).',feat:null},
+  {n:'Cabarita Park',r:'Parramatta River',lat:-33.8460,lon:151.1140,t:'estuary',sp:['Bream','Flathead','Whiting'],why:'Parkland foreshore & wharf — bream, flathead & whiting; popular for prawning. Release only.',feat:null},
+  {n:'Lane Cove River (Fig Tree)',r:'Sydney Harbour',lat:-33.8320,lon:151.1600,t:'estuary',sp:['Bream','Flathead','Luderick'],why:'Mangrove-lined tributary — snaggy bream & flathead, winter luderick. Light gear, high tide.',feat:null},
+
+  /* ===== EASTERN BEACHES ===== */
+  {n:'Bondi Beach',r:'Eastern Beaches',lat:-33.8910,lon:151.2770,t:'beach',sp:['Salmon','Whiting','Bream','Tailor'],why:'Iconic surf beach — salmon & tailor in the gutters, whiting on the sand at the south end.',feat:null},
+  {n:'Coogee / Wedding Cake Is',r:'Eastern Beaches',lat:-33.9210,lon:151.2580,t:'rock',sp:['Bream','Drummer','Salmon','Kingfish'],why:'Rock ledges around the bay — bream, drummer & salmon; kings off the deeper rocks.',feat:'current'},
+  {n:'Clovelly',r:'Eastern Beaches',lat:-33.9140,lon:151.2670,t:'rock',sp:['Luderick','Drummer','Bream'],why:'Sheltered rock channel — luderick on weed, drummer and bream off the ledges.',feat:null},
+  {n:'Maroubra Beach',r:'Eastern Beaches',lat:-33.9500,lon:151.2570,t:'beach',sp:['Salmon','Mulloway','Bream','Whiting'],why:'Powerful surf beach — salmon, big jew at night and whiting/bream in the gutters.',feat:null},
+  {n:'Maroubra (Magic Point)',r:'Eastern Beaches',lat:-33.9570,lon:151.2600,t:'rock',sp:['Kingfish','Salmon','Drummer','Bonito'],why:'Deep-water rock platform — kings, salmon & bonito. Dangerous in swell — gear up, go with a mate.',feat:'current'},
+  {n:'Malabar / Long Bay',r:'Eastern Beaches',lat:-33.9620,lon:151.2520,t:'estuary',sp:['Bream','Salmon','Whiting'],why:'Sheltered bay — bream & whiting in the calm, salmon when they push in.',feat:null},
+
+  /* ===== SYDNEY HARBOUR ===== */
+  {n:'Camp Cove (Watsons Bay)',r:'Sydney Harbour',lat:-33.8385,lon:151.2810,t:'rock',sp:['Kingfish','Squid','Bream'],why:"Sydney Harbour's best shore access to quality kingfish; squid at your feet for bait.",feat:null},
+  {n:'Middle Head',r:'Sydney Harbour',lat:-33.8243,lon:151.2560,t:'rock',sp:['Kingfish','Tailor','Drummer'],why:'Reef meets sand — kings, tailor & drummer. Exposed to swell, take care.',feat:'current'},
+  {n:'Clifton Gardens (Chowder Bay)',r:'Sydney Harbour',lat:-33.8412,lon:151.2526,t:'jetty',sp:['Kingfish','Jewfish','Bream'],why:'Jetty drops into deep water; renowned night jew spot on the drop-off.',feat:null},
+  {n:'Rose Bay — the Blue Hole',r:'Sydney Harbour',lat:-33.8686,lon:151.2670,t:'sand',sp:['Flathead','Whiting','Bream'],why:'Sand flat & deep hole — wade the flats at low tide for flathead & whiting.',feat:null},
+  {n:'Bradleys Head',r:'Sydney Harbour',lat:-33.8516,lon:151.2412,t:'rock',sp:['Bream','Salmon','Tailor','Flathead'],why:'Bream, luderick, flatties, salmon & tailor. Busy boat traffic — care.',feat:'current'},
+  {n:'Nielsen Park (Vaucluse)',r:'Sydney Harbour',lat:-33.8520,lon:151.2720,t:'sand',sp:['Bream','Flathead','Whiting'],why:'Netted swimming bay with sand & reef edges — bream, flathead & whiting close in.',feat:null},
+  {n:'Balmoral Beach',r:'Sydney Harbour',lat:-33.8270,lon:151.2520,t:'beach',sp:['Bream','Whiting','Squid','Kingfish'],why:'Calm Middle Harbour beach — whiting & bream, squid off the rocks, kings on the bait runs.',feat:null},
+  {n:'Parsley Bay (Vaucluse)',r:'Sydney Harbour',lat:-33.8470,lon:151.2700,t:'jetty',sp:['Bream','Flathead','Trevally'],why:'Sheltered netted bay & footbridge — bream & flathead in summer, trevally & john dory in winter.',feat:null},
+  {n:'Manly Cove / West Esplanade',r:'Sydney Harbour',lat:-33.8000,lon:151.2840,t:'jetty',sp:['Bream','Whiting','Squid','Flathead'],why:'Easy netted harbour beach & wharf — whiting, bream, flathead and good squid.',feat:null},
+  {n:'Dobroyd Head',r:'Sydney Harbour',lat:-33.8080,lon:151.2620,t:'rock',sp:['Tailor','Salmon','Kingfish','Drummer'],why:'North Harbour rock ledges with deep water — tailor, salmon, kings & drummer.',feat:'current'},
+
+  /* ===== NORTHERN BEACHES ===== */
+  {n:'Manly Beach',r:'Northern Beaches',lat:-33.7970,lon:151.2880,t:'beach',sp:['Whiting','Tailor','Bream','Salmon'],why:'Long ocean beach — whiting & bream on the sand, tailor & salmon in the gutters at first light.',feat:null},
+  {n:'Curl Curl',r:'Northern Beaches',lat:-33.7680,lon:151.3000,t:'beach',sp:['Whiting','Bream','Tailor','Jewfish'],why:'Excellent gutters — whiting, bream & tailor; jew at night. Popular rock-spin start under 1.2m swell.',feat:null},
+  {n:'Long Reef / Dee Why',r:'Northern Beaches',lat:-33.7440,lon:151.3110,t:'beach',sp:['Whiting','Salmon','Tailor'],why:'Great gutters; reports of big whiting on live worms at first light. Reef platform nearby.',feat:null},
+  {n:'Narrabeen Lagoon entrance',r:'Northern Beaches',lat:-33.7130,lon:151.3040,t:'estuary',sp:['Flathead','Bream','Whiting'],why:'Lagoon mouth — flathead, bream & whiting on the run-out; surf gutters either side.',feat:'current'},
+  {n:'Mona Vale',r:'Northern Beaches',lat:-33.6770,lon:151.3100,t:'rock',sp:['Salmon','Tailor','Drummer','Bream'],why:'Beach plus rock headland — salmon & tailor off the sand, drummer & bream off the rocks.',feat:null},
+  {n:'Avalon Beach',r:'Northern Beaches',lat:-33.6350,lon:151.3300,t:'beach',sp:['Whiting','Salmon','Tailor'],why:'Clean surf beach — whiting on the sand, salmon & tailor in the gutters.',feat:null},
+  {n:'Whale Beach',r:'Northern Beaches',lat:-33.6130,lon:151.3330,t:'rock',sp:['Kingfish','Salmon','Tailor','Drummer'],why:'Fish the northern corner — safe, accessible rock spinning for kings, salmon & tailor.',feat:'current'},
+  {n:'Palm Beach',r:'Northern Beaches',lat:-33.5990,lon:151.3230,t:'beach',sp:['Whiting','Salmon','Jewfish'],why:'Long surf gutters; whiting & salmon by day, jew in the dark on the gutters.',feat:null},
+
+  /* ===== PITTWATER & HAWKESBURY ===== */
+  {n:'Pittwater (Palm Beach wharf)',r:'Pittwater & Hawkesbury',lat:-33.5870,lon:151.3240,t:'estuary',sp:['Kingfish','Squid','Salmon'],why:'Adjoins the Hawkesbury mouth — schools of kingfish and big squid.',feat:null},
+  {n:'Hawkesbury River (Brooklyn)',r:'Pittwater & Hawkesbury',lat:-33.5500,lon:151.2230,t:'deep',sp:['Mulloway','Jewfish','Kingfish','Flathead'],why:'The famous mulloway river — plus winter hairtail in the deep holes.',feat:'current'},
+  {n:'Patonga',r:'Pittwater & Hawkesbury',lat:-33.5510,lon:151.2710,t:'beach',sp:['Flathead','Whiting','Bream'],why:'Calm beach/estuary at the Hawkesbury mouth — easy, family-friendly.',feat:null},
+  {n:'Bobbin Head (Cowan Creek)',r:'Pittwater & Hawkesbury',lat:-33.6450,lon:151.1570,t:'estuary',sp:['Bream','Flathead','Mulloway'],why:'Deep sheltered creek in Ku-ring-gai NP — bream & flathead, mulloway in the holes. Fishes in any wind.',feat:null},
+  {n:'Apple Tree Bay',r:'Pittwater & Hawkesbury',lat:-33.6540,lon:151.1600,t:'estuary',sp:['Flathead','Bream','Trevally'],why:'Cowan Creek bay with ramp — flathead on the flats, bream & trevally around structure.',feat:null},
+  {n:'Akuna Bay',r:'Pittwater & Hawkesbury',lat:-33.6400,lon:151.2320,t:'estuary',sp:['Kingfish','Bream','Flathead','Squid'],why:'Deep marina bay — kings & squid on the moorings, bream & flathead in close.',feat:null},
+  {n:'Church Point (Pittwater)',r:'Pittwater & Hawkesbury',lat:-33.6430,lon:151.2830,t:'jetty',sp:['Bream','Whiting','Squid','Kingfish'],why:'Wharf & foreshore on western Pittwater — bream, whiting, squid and the odd king.',feat:null},
+  {n:'Dangar Island (Hawkesbury)',r:'Pittwater & Hawkesbury',lat:-33.5430,lon:151.2430,t:'deep',sp:['Mulloway','Bream','Flathead','Kingfish'],why:'Deep Hawkesbury channel around the island — mulloway, kings & bream on the tide.',feat:'current'},
+  {n:'Berowra Waters',r:'Pittwater & Hawkesbury',lat:-33.6100,lon:151.1350,t:'estuary',sp:['Bream','Flathead','Bass'],why:'Steep-sided Hawkesbury arm — bream & flathead, bass in the upper creeks. Sheltered.',feat:null},
+
+  /* ===== CENTRAL COAST ===== */
+  {n:'Brisbane Water (Woy Woy)',r:'Central Coast',lat:-33.4850,lon:151.3250,t:'estuary',sp:['Bream','Whiting','Flathead','Luderick'],why:'Oyster leases & sand banks — big bream/whiting; winter luderick plentiful.',feat:null},
+  {n:'Ettalong sand flats',r:'Central Coast',lat:-33.5130,lon:151.3360,t:'sand',sp:['Whiting','Bream','Flathead'],why:'Shallow, calm flats — tides bring fish close. Top family spot.',feat:null},
+  {n:'The Rip Bridge (Blackwall)',r:'Central Coast',lat:-33.5050,lon:151.3230,t:'deep',sp:['Mulloway','Tailor','Kingfish','Snapper','Bream'],why:'Strong-tide deep water funnels big fish. Fish the tide changes.',feat:'current'},
+  {n:'Terrigal — The Skillion',r:'Central Coast',lat:-33.4470,lon:151.4470,t:'rock',sp:['Kingfish','Salmon','Tailor'],why:'Headland with deep access — kings, salmon, tailor & pelagic surprises.',feat:'current'},
+  {n:'Terrigal Haven',r:'Central Coast',lat:-33.4420,lon:151.4490,t:'jetty',sp:['Trevally','Squid','Kingfish','Salmon'],why:'Sheltered haven & breakwall — trevally, squid and live-bait kings off the wall.',feat:null},
+  {n:'Avoca Lake',r:'Central Coast',lat:-33.4670,lon:151.4350,t:'estuary',sp:['Bream','Flathead','Whiting'],why:'Small ICOLL lagoon — bream, flathead & whiting; fires when the entrance is open.',feat:null},
+  {n:'Avoca Beach',r:'Central Coast',lat:-33.4630,lon:151.4340,t:'beach',sp:['Whiting','Salmon','Tailor','Jewfish'],why:'Surf gutters — whiting & salmon by day, tailor & jew at first/last light.',feat:null},
+  {n:'Wamberal Beach',r:'Central Coast',lat:-33.4280,lon:151.4520,t:'beach',sp:['Whiting','Salmon','Tailor'],why:'Long open beach — whiting on the sand, salmon & tailor in the gutters.',feat:null},
+  {n:'The Entrance Channel',r:'Central Coast',lat:-33.3490,lon:151.5030,t:'estuary',sp:['Bream','Flathead','Whiting','Tailor'],why:'Rapid channel linking lake to ocean — a thoroughfare for all species.',feat:'current'},
+  {n:'Tuggerah Lake (Long Jetty)',r:'Central Coast',lat:-33.3580,lon:151.4810,t:'jetty',sp:['Flathead','Bream','Tailor'],why:'Huge shallow lake; #1 logged species are dusky flathead & yellowfin bream.',feat:null},
+  {n:'Norah Head',r:'Central Coast',lat:-33.2820,lon:151.5780,t:'rock',sp:['Tailor','Salmon','Drummer','Kingfish','Snapper'],why:'Lighthouse headland with deep water — tailor, salmon, drummer, kings & snapper.',feat:'current'},
+  {n:'Toukley Bridge',r:'Central Coast',lat:-33.2700,lon:151.5400,t:'deep',sp:['Bream','Flathead','Whiting','Luderick'],why:'Bridge between Tuggerah & Budgewoi lakes — current holds bream, flathead & luderick.',feat:'current'},
+  {n:'Budgewoi Lake',r:'Central Coast',lat:-33.2330,lon:151.5560,t:'estuary',sp:['Bream','Flathead'],why:'Quiet, productive lake for bream & flathead — space for everyone.',feat:null},
+  {n:'Lake Munmorah',r:'Central Coast',lat:-33.2010,lon:151.5840,t:'estuary',sp:['Flathead','Bream','Trevally','Tailor','Salmon'],why:'Scenic bush-meets-water lake; flathead, bream, trevally, tailor & salmon.',feat:null},
+  {n:'Killcare / Putty Beach',r:'Central Coast',lat:-33.5220,lon:151.3750,t:'beach',sp:['Salmon','Tailor','Whiting','Drummer'],why:'Beach plus Bouddi NP headlands — salmon & tailor in the surf, drummer off the rocks.',feat:null},
+
+  /* ===== WARM-WATER BELT ===== */
+  {n:'Mannering Park (Wyee Bay)',r:'Warm-water belt',lat:-33.1700,lon:151.5350,t:'thermal',sp:['Bream','Flathead','Tarwhine'],why:'Warm-water belt near Vales Point outlet — winter fish magnet. Obey canal closures!',feat:'thermal'},
+  {n:'Myuna Bay (Eraring)',r:'Warm-water belt',lat:-33.0680,lon:151.5180,t:'thermal',sp:['Bream','Flathead'],why:'Thermal influence keeps fish active in winter. Canals closed 1 May–31 Aug, 6pm–6am.',feat:'thermal'},
+
+  /* ===== LAKE MACQUARIE ===== */
+  {n:'Swansea Channel',r:'Lake Macquarie',lat:-33.0870,lon:151.6480,t:'deep',sp:['Kingfish','Mulloway','Salmon','Trevally','Luderick'],why:'One of the best on the NSW coast — kings ambush in the current, jew hold the holes.',feat:'current'},
+  {n:'Marks Point flats',r:'Lake Macquarie',lat:-33.0560,lon:151.6240,t:'sand',sp:['Flathead','Whiting'],why:'Prime wade-able flathead & whiting flats in summer.',feat:null},
+  {n:'Pulbah Island',r:'Lake Macquarie',lat:-33.0840,lon:151.5870,t:'reef',sp:['Snapper','Trevally'],why:'Reef edges around the reserve — snapper & trevally feed at first light.',feat:null},
+  {n:'Croudace Bay / Wangi',r:'Lake Macquarie',lat:-33.0470,lon:151.6010,t:'estuary',sp:['Bream','Flathead'],why:'Sheltered bays — reliable bream & flathead protected from almost any wind.',feat:null},
+  {n:'Belmont (Lake Mac)',r:'Lake Macquarie',lat:-33.0300,lon:151.6650,t:'estuary',sp:['Bream','Flathead','Whiting','Luderick'],why:'Eastern shore bays & jetties — bream, flathead, whiting; winter luderick on the weed.',feat:null},
+  {n:'Warners Bay',r:'Lake Macquarie',lat:-32.9720,lon:151.6520,t:'estuary',sp:['Bream','Flathead'],why:'Western shore with foreshore walk & jetties — easy bream & flathead.',feat:null},
+  {n:'Toronto',r:'Lake Macquarie',lat:-33.0100,lon:151.5950,t:'estuary',sp:['Bream','Flathead','Luderick'],why:'Deep western bays — bream & flathead around moorings, luderick off the wharves.',feat:null},
+  {n:'Murrays Beach',r:'Lake Macquarie',lat:-33.1100,lon:151.6300,t:'sand',sp:['Flathead','Whiting','Bream'],why:'Sheltered southern-lake flats — wade for flathead and whiting; protected from wind.',feat:null},
+  {n:'Catherine Hill Bay',r:'Lake Macquarie',lat:-33.1600,lon:151.6250,t:'rock',sp:['Salmon','Tailor','Drummer','Bream'],why:'Historic jetty & rock platforms — salmon, tailor & drummer off the ledges.',feat:null},
+  {n:'Caves Beach',r:'Lake Macquarie',lat:-33.1800,lon:151.6380,t:'rock',sp:['Salmon','Tailor','Bream','Drummer'],why:'Beach plus sea caves & rock ledges — salmon, tailor and drummer; explore at low tide.',feat:null},
+  {n:'Blacksmiths Beach',r:'Lake Macquarie',lat:-33.0750,lon:151.6650,t:'beach',sp:['Whiting','Tailor','Salmon','Jewfish'],why:'Beach beside Swansea channel mouth — whiting & tailor, big jew in the gutters at night.',feat:null},
+
+  /* ===== NEWCASTLE ===== */
+  {n:'Swansea Breakwall',r:'Newcastle',lat:-33.0890,lon:151.6650,t:'rock',sp:['Tailor','Salmon','Bream','Mulloway'],why:'Channel-mouth current & structure where ocean meets the lake.',feat:'current'},
+  {n:'Redhead Beach',r:'Newcastle',lat:-33.0000,lon:151.7150,t:'beach',sp:['Whiting','Tailor','Salmon','Jewfish'],why:'Long surf beach under the bluff — whiting & tailor, jew in the deeper gutters.',feat:null},
+  {n:'Merewether / Bar Beach',r:'Newcastle',lat:-32.9430,lon:151.7660,t:'beach',sp:['Salmon','Tailor'],why:'Reliable salmon when gutters form on a moderate swell.',feat:null},
+  {n:'Newcastle Baths / Cowrie Hole',r:'Newcastle',lat:-32.9290,lon:151.7900,t:'rock',sp:['Bream','Drummer','Trevally','Salmon'],why:'Rock platforms by the baths — bream, drummer & trevally; salmon in the wash.',feat:null},
+  {n:'Nobbys Breakwall',r:'Newcastle',lat:-32.9180,lon:151.8010,t:'rock',sp:['Kingfish','Bonito','Tailor','Salmon'],why:'Harbour-mouth big-fish lane — kings & pelagics, best when water >20°C.',feat:'current'},
+  {n:'Queens Wharf / Honeysuckle',r:'Newcastle',lat:-32.9270,lon:151.7870,t:'jetty',sp:['Mulloway','Bream'],why:'Deep Hunter River channel — mulloway under the berths, bream on the wharves.',feat:'current'},
+  {n:'Horseshoe Beach',r:'Newcastle',lat:-32.9220,lon:151.7880,t:'estuary',sp:['Bream','Flathead','Whiting'],why:'Sheltered harbour beach (dog-friendly) — easy bream, flathead & whiting.',feat:null},
+  {n:'Stockton Breakwall',r:'Newcastle',lat:-32.9180,lon:151.7920,t:'rock',sp:['Mulloway','Tailor','Bream','Salmon'],why:'North side of the harbour mouth — mulloway, tailor & bream in the channel current.',feat:'current'},
+  {n:'Stockton Beach',r:'Newcastle',lat:-32.8950,lon:151.7980,t:'beach',sp:['Whiting','Tailor'],why:'30km of gutters & wash — prime whiting & tailor country.',feat:null},
+  {n:'Hexham (Hunter River)',r:'Newcastle',lat:-32.8320,lon:151.6900,t:'estuary',sp:['Bream','Flathead','Mulloway'],why:'Upper Hunter estuary & flats — bream, flathead and mulloway around the bridge & snags.',feat:null}
+];
+  const NSW_BAITS = {
+  Bream:['Live nippers (ghost shrimp)','Raw Hawkesbury prawns','Peeled prawn','Chicken breast cubes','Mullet strip','Pilchard cubes','Bread'],
+  Flathead:['Live nippers','Pilchard','Whitebait','Live poddy mullet','Z-Man 2.5" Slim SwimZ (Motor Oil)','Soft plastic jerk shad'],
+  Whiting:['Live beach worms','Blood worms','Live nippers','Pipis','Squirt worms','Surface popper'],
+  Jewfish:['Fresh squid (whole/strips)','Live yakkas','Live mullet','Squid head','Fresh fish fillet','Soft vibe'],
+  Mulloway:['Live tailor','Fresh squid (whole)','Squid head','Live mullet','Large soft plastic'],
+  Tailor:['Pilchard (ganged)','Garfish','Whitebait','Metal slugs','White popper'],
+  Salmon:['Pilchard (ganged)','Metal slugs','Whitebait','Surface popper'],
+  Snapper:['Whole pilchard','Fresh squid','Slimy mackerel','Octopus','5–7" soft plastic'],
+  Trevally:['Raw Hawkesbury prawns','Peeled prawn','Chicken breast cubes','Cut pilchard','Ecogear VX blade','Soft plastic'],
+  Kingfish:['Fresh squid (live/strips)','Live yakkas (yellowtail scad)','Live garfish','Knife/speed jig','Stickbait'],
+  Bonito:['Metal slugs','Small white lures','Live yakkas'],
+  Drummer:['Cunjevoi','Bread','Cabbage weed','Peeled prawn'],
+  Luderick:['Green weed','Cabbage weed'],
+  Squid:['Squid jig (prawn pattern)'],
+  Tarwhine:['Peeled prawn','Live nippers','Bread'],
+  Bluefish:['Pilchard (ganged)','Whitebait','Metal slugs'],
+  Bass:['Surface lures','Spinnerbaits','Live worms','Small soft plastics']
+};
+  const TYPE = {rock:{e:'⛰️',c:'#f472b6'},jetty:{e:'🎣',c:'#34d399'},beach:{e:'🏖️',c:'#f59e0b'},estuary:{e:'🌊',c:'#a78bfa'},sand:{e:'🏝️',c:'#fbbf24'},deep:{e:'🕳️',c:'#22d3ee'},reef:{e:'🪸',c:'#fb7185'},thermal:{e:'🔥',c:'#fb923c'}};
+  function hav(la1,lo1,la2,lo2){const R=6371,p=Math.PI/180,dla=(la2-la1)*p,dlo=(lo2-lo1)*p;const a=Math.sin(dla/2)**2+Math.cos(la1*p)*Math.cos(la2*p)*Math.sin(dlo/2)**2;return 2*R*Math.asin(Math.sqrt(a));}
+  function baitKeyFor(name){ if(NSW_BAITS[name])return name; const k=Object.keys(NSW_BAITS).find(key=>name.includes(key)||key.includes(name)); return k||null; }
+  function spotBaits(sp){ const out=[]; (sp.sp||[]).forEach(x=>{const k=baitKeyFor(x); if(k)NSW_BAITS[k].forEach(b=>{if(!out.includes(b))out.push(b);});}); return out.slice(0,5); }
+  function regions(){ return ['All', ...new Set(SPOTS.map(x=>x.r))]; }
+  function near(lat,lon,n){ if(lat==null)return SPOTS.slice(0,n||6).map(x=>({...x,dist:null})); return SPOTS.map(x=>({...x,dist:hav(lat,lon,x.lat,x.lon)})).sort((a,b)=>a.dist-b.dist).slice(0,n||6); }
+  function filter(lat,lon,q,region,cat){ let list=SPOTS.map(x=>({...x,dist:(lat!=null?hav(lat,lon,x.lat,x.lon):null)})); if(region&&region!=='All')list=list.filter(x=>x.r===region); if(cat)list=list.filter(x=>catMatch(x,cat)); q=(q||'').trim().toLowerCase(); if(q)list=list.filter(x=>x.n.toLowerCase().includes(q)||x.r.toLowerCase().includes(q)||(x.sp||[]).some(y=>y.toLowerCase().includes(q))||spotBaits(x).join(' ').toLowerCase().includes(q)); if(lat!=null)list.sort((a,b)=>(a.dist==null?9e9:a.dist)-(b.dist==null?9e9:b.dist)); return list; }
+  function waterType(sp){ if(sp.water)return sp.water; if((sp.sp||[]).includes('Bass'))return 'fresh'; if(sp.t==='estuary'||/river|creek|lake|bridge/i.test(sp.n))return 'brackish'; return 'salt'; }
+  function structureType(sp){ if(/bridge/i.test(sp.n))return 'bridge'; if(/wharf|jetty|baths|pier/i.test(sp.n)||sp.t==='jetty')return 'wharf'; if(sp.t==='rock')return 'rocks'; if(sp.t==='beach')return 'beach'; if(sp.t==='reef')return 'reef'; if(sp.t==='estuary')return 'estuary'; if(sp.t==='thermal')return 'thermal'; if(sp.t==='deep')return 'channel'; return 'flats'; }
+  function catMatch(sp,cat){ if(!cat)return true; if(cat==='hot')return sp.feat==='thermal'; if(cat==='pressure')return sp.feat==='current'; if(cat==='salt'||cat==='brackish'||cat==='fresh')return waterType(sp)===cat; return structureType(sp)===cat; }
+  return { SPOTS, TYPE, spotBaits, regions, near, filter, waterType, structureType, catMatch };
+})();
+
 /* ---------------- ScoreEngine ---------------- */
 const ScoreEngine = (() => {
   const word = s => s >= 80 ? 'SEND IT 🚀' : s >= 65 ? 'Worth a crack' : s >= 45 ? 'Fair — give it a go' : s >= 28 ? 'Slow — tough going' : 'Leave it — tie rigs at home';
@@ -1164,7 +1365,7 @@ const UIService = (() => {
       srcBadge(d.swell ? 'live' : 'off', 'Swell: ' + (d.swell ? 'live' : 'n/a'));
 
     // Resilient: a failure in one section never blanks the others.
-    [renderBestWindow, renderBite, renderWhy, renderTide, renderWeather, renderForecast, renderSpecies, renderPlanner, renderSafety]
+    [renderBestWindow, renderBite, renderWhy, renderTide, renderWeather, renderForecast, renderSpecies, renderPlanner, renderSpots, renderSafety]
       .forEach(fn => { try { fn(d); } catch (e) { DebugService.log('render error in ' + (fn.name || '?'), e); } });
   }
 
@@ -1415,7 +1616,33 @@ const UIService = (() => {
   function windDisp(kmh) { return AppState.units === 'kn' ? Util.round(kmh / 1.852) : Util.round(kmh); }
   function windUnit() { return AppState.units === 'kn' ? 'kn' : 'km/h'; }
   function sameDay(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
-  return { render, setLocName, loadingHero, flagStale, renderFav, renderSavedRecent, renderLog, openCatchSheet, openSheet, closeSheet, hideSheet, sheetOpen };
+  function renderSpots() {
+    const host = $('#spotList'); if (!host) return;
+    const loc = AppState.loc || {}; const all = AppState.spotsAll;
+    const nb = $('#spotNearBtn'), ab = $('#spotAllBtn');
+    if (nb) nb.className = 'seg' + (!all ? ' on' : ''); if (ab) ab.className = 'seg' + (all ? ' on' : '');
+    const sw = $('#spotSearchWrap'); if (sw) sw.style.display = all ? 'flex' : 'none';
+    const CATS = [['','All'],['hot','🔥 Hot'],['pressure','🌊 Pressure'],['salt','🧂 Salt'],['brackish','🪣 Brackish'],['fresh','💧 Fresh'],['rocks','⛰️ Rocks'],['beach','🏖️ Beach'],['bridge','🌉 Bridge'],['wharf','🎣 Wharf'],['estuary','🌊 Estuary'],['reef','🪸 Reef']];
+    const cc = $('#spotCats');
+    if (cc) { cc.style.display = all ? 'flex' : 'none'; if (all) { cc.innerHTML = CATS.map(c => '<button class="chip ' + ((AppState.spotCat || '') === c[0] ? 'good' : '') + '" data-sc="' + c[0] + '">' + c[1] + '</button>').join(''); $$('#spotCats [data-sc]').forEach(b => b.addEventListener('click', () => { AppState.spotCat = b.dataset.sc; renderSpots(); })); } }
+    const rc = $('#spotRegions');
+    if (rc) { rc.style.display = all ? 'flex' : 'none'; if (all) { rc.innerHTML = SpotsService.regions().map(r => '<button class="chip ' + ((AppState.spotRegion || 'All') === r ? 'good' : '') + '" data-sr="' + Util.esc(r) + '">' + Util.esc(r) + '</button>').join(''); $$('#spotRegions [data-sr]').forEach(b => b.addEventListener('click', () => { AppState.spotRegion = b.dataset.sr; renderSpots(); })); } }
+    let list = all ? SpotsService.filter(loc.lat, loc.lon, AppState.spotQuery, AppState.spotRegion, AppState.spotCat) : SpotsService.near(loc.lat, loc.lon, 6);
+    const cnt = $('#spotCount'); if (cnt) cnt.textContent = all ? (list.length + ' of ' + SpotsService.SPOTS.length) : 'nearest 6';
+    list = list.slice(0, all ? 40 : 6);
+    host.innerHTML = list.map(sp => { const m = SpotsService.TYPE[sp.t] || { e: '📍' }; const baits = SpotsService.spotBaits(sp);
+      const feat = sp.feat === 'thermal' ? '<span class="chip warn" style="font-size:10px">🔥 warm</span>' : sp.feat === 'current' ? '<span class="chip blue" style="font-size:10px">🌊 current</span>' : '';
+      return '<button class="spot tap" data-spot="' + sp.lat + ',' + sp.lon + '" data-name="' + Util.esc(sp.n) + '">' +
+        '<div class="between"><span style="font-weight:700;font-size:14px">' + (m.e || '📍') + ' ' + Util.esc(sp.n) + '</span>' + (sp.dist != null ? '<span class="muted" style="font-size:11px;flex:0 0 auto">' + Util.round(sp.dist, 1) + ' km</span>' : '') + '</div>' +
+        '<div class="muted" style="font-size:11px">' + Util.esc(sp.r) + ' · ' + SpotsService.waterType(sp) + ' · ' + SpotsService.structureType(sp) + '</div>' +
+        '<div class="scroller" style="gap:5px;margin-top:6px">' + feat + (sp.sp || []).slice(0, 4).map(x => '<span class="chip" style="font-size:10px">' + Util.esc(x) + '</span>').join('') + '</div>' +
+        '<div class="muted" style="font-size:12px;margin-top:6px">' + Util.esc(sp.why) + '</div>' +
+        (baits.length ? '<div style="font-size:11px;margin-top:5px"><span class="muted">🪱 Top baits:</span> ' + Util.esc(baits.join(', ')) + '</div>' : '') +
+        '<div style="font-size:12px;margin-top:7px;color:var(--aqua);font-weight:700">Load conditions here →</div>' +
+      '</button>'; }).join('') || '<div class="muted" style="font-size:13px">No spots match your search.</div>';
+    $$('#spotList [data-spot]').forEach(b => b.addEventListener('click', () => { const p = b.dataset.spot.split(',').map(Number); LocationService.load({ name: b.dataset.name, lat: p[0], lon: p[1], source: 'curated-spot' }); window.scrollTo({ top: 0, behavior: 'smooth' }); Util.toast('Loaded ' + b.dataset.name); })); }
+
+  return { render, setLocName, loadingHero, flagStale, renderFav, renderSavedRecent, renderLog, openCatchSheet, openSheet, closeSheet, hideSheet, sheetOpen, renderSpots };
 })();
 
 /* ---------------- DebugService panel (?debug=true) ---------------- */
@@ -1488,6 +1715,34 @@ function bindSearch() {
   document.addEventListener('click', e => { if (!e.target.closest('#suggest') && !e.target.closest('.searchbar')) sug.classList.add('hidden'); });
 }
 
+/* ---------------- Map (lazy Leaflet — core app stays self-contained) ---------------- */
+let _map = null;
+function loadLeaflet(cb) {
+  if (window.L) { cb(); return; }
+  const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(css);
+  const js = document.createElement('script'); js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; js.onload = cb; js.onerror = () => { const n = $('#mapNote'); if (n) n.textContent = 'Map needs internet'; }; document.head.appendChild(js);
+}
+function showMap() {
+  $('#map').style.display = 'block'; $('#mapLegend').style.display = 'flex'; const b = $('#mapBtn'); if (b) b.style.display = 'none';
+  $('#mapNote').textContent = 'loading…';
+  loadLeaflet(() => { try { initMap(); $('#mapNote').textContent = SpotsService.SPOTS.length + ' spots'; } catch (e) { $('#mapNote').textContent = 'Map error'; DebugService.log('map', e); } });
+}
+function initMap() {
+  const loc = AppState.loc || { lat: -33.86, lon: 151.21 };
+  if (!_map) {
+    _map = L.map('map', { zoomControl: true }).setView([loc.lat, loc.lon], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '\u00a9 OpenStreetMap' }).addTo(_map);
+    SpotsService.SPOTS.forEach(sp => {
+      const col = sp.feat === 'thermal' ? '#f4b740' : sp.feat === 'current' ? '#2bd4d4' : '#33e1c0';
+      L.circleMarker([sp.lat, sp.lon], { radius: 6, color: col, fillColor: col, fillOpacity: .85, weight: 1 }).addTo(_map)
+        .bindPopup('<b>' + Util.esc(sp.n) + '</b><br>' + Util.esc(sp.r) + '<br>' + Util.esc((sp.sp || []).slice(0, 4).join(', ')) + '<br><a href="#" data-ml="' + sp.lat + ',' + sp.lon + '|' + Util.esc(sp.n) + '">Load conditions \u2192</a>');
+    });
+    _map.on('popupopen', e => { const a = e.popup._contentNode.querySelector('[data-ml]'); if (a) a.addEventListener('click', ev => { ev.preventDefault(); const parts = a.dataset.ml.split('|'); const ll = parts[0].split(',').map(Number); LocationService.load({ name: parts[1], lat: ll[0], lon: ll[1], source: 'curated-spot' }); window.scrollTo({ top: 0, behavior: 'smooth' }); }); });
+  }
+  if (loc.lat) { if (_map._you) _map.removeLayer(_map._you); _map._you = L.marker([loc.lat, loc.lon]).addTo(_map).bindPopup('You: ' + Util.esc(loc.name || 'here')); _map.setView([loc.lat, loc.lon], 11); }
+  setTimeout(() => _map.invalidateSize(), 250);
+}
+
 /* ---------------- Dashboard quick theme switch ---------------- */
 function renderThemeSwitch() {
   const el = $('#themeQuick'); if (!el) return; const t = ThemeService.get();
@@ -1507,6 +1762,10 @@ function bindUI() {
   $('#locBtn').addEventListener('click', () => $('#search').focus());
   $('#addCatch').addEventListener('click', () => UIService.openCatchSheet());
   $('#setBtn').addEventListener('click', () => openSettings());
+  $('#spotNearBtn').addEventListener('click', () => { AppState.spotsAll = false; UIService.renderSpots(); });
+  $('#spotAllBtn').addEventListener('click', () => { AppState.spotsAll = true; UIService.renderSpots(); });
+  { const si = $('#spotSearch'); if (si) si.addEventListener('input', () => { AppState.spotQuery = si.value; AppState.spotsAll = true; UIService.renderSpots(); }); }
+  { const mb = $('#mapBtn'); if (mb) mb.addEventListener('click', showMap); }
   $('#sheetBg').addEventListener('click', () => UIService.closeSheet());
   // hardware / browser Back closes an open sheet instead of leaving the app
   window.addEventListener('popstate', () => { if (UIService.sheetOpen()) UIService.hideSheet(); });
@@ -1521,7 +1780,7 @@ function bindUI() {
 function boot() {
   ThemeService.apply(ThemeService.get());
   const u = CacheService.get('units', null); if (u === 'kn' || u === 'kmh') AppState.units = u;
-  bindSearch(); bindUI(); registerSW(); renderThemeSwitch();
+  bindSearch(); bindUI(); registerSW(); renderThemeSwitch(); UIService.renderSpots();
   UIService.renderSavedRecent(); UIService.renderLog(); UIService.renderFav();
   const last = LocationService.getLast();
   LocationService.load(last && last.lat ? last : LocationService.DEFAULT);
